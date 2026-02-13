@@ -22,7 +22,7 @@ public class Huub_De_HR_Chatbot extends JFrame {
     private static final String API_KEY = System.getenv("OPENAI_API_KEY");
     private static final OkHttpClient CLIENT = new OkHttpClient();
 
-    private static final String PERSONEELSGIDS_VERSIE = "Personeelsgids versie 2024.1";
+    private static final String PERSONEELSGIDS_VERSIE = "Personeelsgids BU Talentclass versie 2024.1"; // Geeft versie van de personeelsgids aan
 
     private JPanel chatPanel;
     private JScrollPane scrollPane;
@@ -270,26 +270,26 @@ public class Huub_De_HR_Chatbot extends JFrame {
             "Dit omvat bijvoorbeeld vakantieverlof, bijzonder verlof, ouderschapsverlof, ziekteverlof en het opnemen van vrije dagen. " +
             "Als een vraag niet over verlof gaat, geef je netjes aan dat je binnen deze sprint alleen verlofvragen ondersteunt. " +
             
-                "AGENT 1 – PERSONEELSGIDS: " +
+                "AGENT 1 – INFORMATIEVOORZIENING PERSONEELSGIDS: " +
             "Controleer altijd eerst of het antwoord in het onderdeel verlof van de personeelsgids staat. " +
-            "Gebruik uitsluitend informatie uit de personeelsgids en verwijs altijd naar hoofdstuk en pagina. " +
             "Gebruik primair het onderdeel verlof uit de personeelsgids als hoofdbron. " +
+            "Gebruik uitsluitend informatie uit de personeelsgids en verwijs bij elk antwoord altijd naar de precieze pagina. " + // US13
             
-                "BELANGRIJK (USER STORIES): " +
+                "AGENT 2 - BETROUWBAARHEID EN COMPLIANCE" +
+            "Je sluit elk antwoord af met een korte disclaimer. " +
+            "Je vermeldt in de disclaimer daarnaast dat de verstrekte informatie mogelijk niet volledig, actueel of volledig correct is en dat er geen garantie op juistheid wordt gegeven. " + // US19
+            "Je geeft in de disclaimer expliciet aan dat je antwoorden informatief van aard zijn en geen juridisch bindend advies vormen. " + // US20
+            "Je verzint nooit informatie. " +
             "Als het antwoord niet in de personeelsgids staat of onvoldoende duidelijk is, zeg je expliciet dat je het antwoord niet uit de personeelsgids kunt halen. " + // user story 24
             "Adviseer in dat geval de medewerker om contact op te nemen met zijn of haar leidinggevende. " + // user story 24
-            "Je verzint nooit informatie. " +
             "Je geeft geen waardeoordelen, meningen of kwalificaties zoals 'goed', 'slecht', 'verstandig' of 'aan te raden'. " + // user story 25
-            "Je antwoordt uitsluitend feitelijk en neutraal op basis van de personeelsgids. " + // user story 25
+            "Je antwoordt uitsluitend feitelijk en neutraal op basis van de personeelsgids. " + // user story 25    
             
-                "GESPREKSGEHEUGEN: " +
-            "Je onthoudt eerdere vragen en antwoorden binnen dit gesprek en gebruikt deze als context. " + // deze werkt nog niet..
+                "AGENT 3 - INTERACTIE EN UX" +
             
-                "REGELS: " +
-            "Je sluit elk inhoudelijk antwoord af met een korte disclaimer." +
-            "Je geeft in de disclaimer expliciet aan dat je antwoorden informatief van aard zijn en geen juridisch bindend advies vormen. " + // US20
-            "Je vermeldt in de disclaimer daarnaast dat de verstrekte informatie mogelijk niet volledig, actueel of volledig correct is en dat er geen garantie op juistheid wordt gegeven. "; // US19
 
+                "AGENT 4 - BEHEER EN ONDERHOUD";
+            
 
         JSONArray messages = new JSONArray()
                 .put(new JSONObject().put("role", "system").put("content", systemPrompt));
@@ -306,7 +306,7 @@ public class Huub_De_HR_Chatbot extends JFrame {
         JSONObject body = new JSONObject()
                 .put("model", "gpt-4o-mini")
                 .put("messages", messages)
-                .put("temperature", 0.3);
+                .put("temperature", 0.3); // Temperature kan voor consistentere antwoorden nog gezet worden op 0.1
 
         Request request = new Request.Builder()
                 .url("https://api.openai.com/v1/chat/completions")
