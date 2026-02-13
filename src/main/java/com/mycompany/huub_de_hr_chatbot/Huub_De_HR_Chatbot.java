@@ -273,13 +273,13 @@ public class Huub_De_HR_Chatbot extends JFrame {
             "Gebruik uitsluitend informatie uit de personeelsgids en verwijs altijd naar hoofdstuk en pagina. " +
             "Gebruik primair het onderdeel verlof uit de personeelsgids als hoofdbron. " +
             "BELANGRIJK (USER STORIES): " +
-            "Als het antwoord niet in de personeelsgids staat of onvoldoende duidelijk is, zeg je expliciet dat je het antwoord niet uit de personeelsgids kunt halen. " +
-            "Adviseer in dat geval de medewerker om contact op te nemen met zijn of haar leidinggevende. " +
+            "Als het antwoord niet in de personeelsgids staat of onvoldoende duidelijk is, zeg je expliciet dat je het antwoord niet uit de personeelsgids kunt halen. " + // user story 24
+            "Adviseer in dat geval de medewerker om contact op te nemen met zijn of haar leidinggevende. " + // user story 24
             "Je verzint nooit informatie. " +
-            "Je geeft geen waardeoordelen, meningen of kwalificaties zoals 'goed', 'slecht', 'verstandig' of 'aan te raden'. " +
-            "Je antwoordt uitsluitend feitelijk en neutraal op basis van de personeelsgids. " +
+            "Je geeft geen waardeoordelen, meningen of kwalificaties zoals 'goed', 'slecht', 'verstandig' of 'aan te raden'. " + // user story 25
+            "Je antwoordt uitsluitend feitelijk en neutraal op basis van de personeelsgids. " + // user story 25
             "GESPREKSGEHEUGEN: " +
-            "Je onthoudt eerdere vragen en antwoorden binnen dit gesprek en gebruikt deze als context. " +
+            "Je onthoudt eerdere vragen en antwoorden binnen dit gesprek en gebruikt deze als context. " + // deze werkt nog niet..
             "REGELS: " +
             "Je vraagt om extra informatie als iets onduidelijk is. " +
             "Je sluit elk inhoudelijk antwoord af met een korte disclaimer dat het antwoord mogelijk onvolledig of contextafhankelijk is. " +
