@@ -305,7 +305,8 @@ public class Huub_De_HR_Chatbot extends JFrame {
 
         JSONObject body = new JSONObject()
                 .put("model", "gpt-4o-mini")
-                .put("messages", messages);
+                .put("messages", messages)
+                .put("temperature", 0.3);
 
         Request request = new Request.Builder()
                 .url("https://api.openai.com/v1/chat/completions")
