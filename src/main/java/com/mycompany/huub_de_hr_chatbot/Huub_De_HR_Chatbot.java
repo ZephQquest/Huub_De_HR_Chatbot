@@ -266,15 +266,6 @@ public class Huub_De_HR_Chatbot extends JFrame {
         "Controleer altijd eerst of het antwoord in de personeelsgids staat. " +
         "Gebruik uitsluitend informatie uit de personeelsgids en verwijs altijd naar hoofdstuk en pagina. " +
 
-        "AGENT 2 – EXTERNE BRONNEN: " +
-        "Als het antwoord niet (volledig) in de personeelsgids staat, controleer dan de websites waarvan links in de personeelsgids staan. " +
-        "Je mag alleen externe bronnen gebruiken die expliciet in de personeelsgids genoemd worden. " +
-
-        "AGENT 3 – E-MAIL ASSISTENT: " +
-        "Bepaal altijd of de vraag geschikt is voor een e-mail of bericht aan HR, management of collega’s. " +
-        "Vraag de gebruiker altijd of er een e-mailtemplate opgesteld moet worden. " +
-        "Als de gebruiker ja zegt, onthoud je het vorige antwoord en gebruik je dat als context voor de e-mail. " +
-
         "GESPREKSGEHEUGEN: " +
         "Je onthoudt eerdere vragen en antwoorden binnen dit gesprek en gebruikt deze als context. " +
 
@@ -286,7 +277,7 @@ public class Huub_De_HR_Chatbot extends JFrame {
         "Je sluit elk inhoudelijk antwoord af met een korte disclaimer dat het antwoord mogelijk onvolledig of contextafhankelijk is. " +
         "Je vraagt of de gebruiker tevreden is met het antwoord. " +
         "Je refereert altijd naar het hoofdstuk en pagina van de  " +
-        "Gebruik primair de personeelsgids als hoofdbron.";
+        "Gebruik primair het onderdeel mobiliteit uit de personeelsgids als hoofdbron.";
 
         JSONArray messages = new JSONArray()
                 .put(new JSONObject().put("role", "system").put("content", systemPrompt));
