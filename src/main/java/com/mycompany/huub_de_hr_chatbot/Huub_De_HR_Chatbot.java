@@ -1,11 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
 package com.mycompany.huub_de_hr_chatbot;
-/*
- * Corporate Edition – Huub HR Chatbot
- * Professioneel herstructureerde en opgeschoonde versie
- */
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -22,12 +15,14 @@ import java.util.List;
 
 public class Huub_De_HR_Chatbot extends JFrame {
 
-    // ------------------------------------------------------------
-    //  CONFIGURATIE
-    // ------------------------------------------------------------
+    // ==============================
+    // CONFIGURATIE
+    // ==============================
 
     private static final String API_KEY = System.getenv("OPENAI_API_KEY");
     private static final OkHttpClient CLIENT = new OkHttpClient();
+
+    private static final String PERSONEELSGIDS_VERSIE = "Personeelsgids versie 2024.1";
 
     private JPanel chatPanel;
     private JScrollPane scrollPane;
@@ -37,9 +32,9 @@ public class Huub_De_HR_Chatbot extends JFrame {
     private final List<JSONObject> conversationHistory = new ArrayList<>();
     private final List<Chunk> chunks = new ArrayList<>();
 
-    // ------------------------------------------------------------
-    //  DATASTRUCTUREN
-    // ------------------------------------------------------------
+    // ==============================
+    // DATASTRUCTUUR
+    // ==============================
 
     static class Chunk {
         String text;
@@ -51,12 +46,13 @@ public class Huub_De_HR_Chatbot extends JFrame {
         }
     }
 
-    // ------------------------------------------------------------
-    //  CONSTRUCTOR
-    // ------------------------------------------------------------
+    // ==============================
+    // CONSTRUCTOR
+    // ==============================
 
     public Huub_De_HR_Chatbot() throws Exception {
-        setTitle("Huub – HR Chatbot");
+
+        setTitle("Huub – HR Chatbot (Verlof)");
         setSize(1100, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -68,17 +64,18 @@ public class Huub_De_HR_Chatbot extends JFrame {
 
         setVisible(true);
 
-        addBubble("Welkom! Ik ben Huub, jouw HR‑assistent.", false);
+        addBubble("Welkom! Ik ben Huub, jouw HR-assistent (domein: verlof).", false);
+        addBubble("Gebruikte bron: " + PERSONEELSGIDS_VERSIE, false);
+
         loadGuide();
     }
 
-    // ------------------------------------------------------------
-    //  UI OPBOUW
-    // ------------------------------------------------------------
+    // ==============================
+    // UI
+    // ==============================
 
     private void setupChatPanel() {
         chatPanel = new JPanel() {
-            @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 g.drawImage(backgroundImage, 0, 0, null);
@@ -117,9 +114,9 @@ public class Huub_De_HR_Chatbot extends JFrame {
         inputField.addActionListener(e -> send());
     }
 
-    // ------------------------------------------------------------
-    //  CHAT LOGICA
-    // ------------------------------------------------------------
+    // ==============================
+    // CHAT
+    // ==============================
 
     private void send() {
         String question = inputField.getText().trim();
@@ -133,7 +130,8 @@ public class Huub_De_HR_Chatbot extends JFrame {
                 String answer = ask(question);
                 SwingUtilities.invokeLater(() -> addBubble(answer, false));
             } catch (Exception ex) {
-                SwingUtilities.invokeLater(() -> addBubble("Er ging iets mis: " + ex.getMessage(), false));
+                SwingUtilities.invokeLater(() ->
+                        addBubble("Er ging iets mis: " + ex.getMessage(), false));
             }
         }).start();
     }
@@ -172,9 +170,9 @@ public class Huub_De_HR_Chatbot extends JFrame {
         });
     }
 
-    // ------------------------------------------------------------
-    //  PDF LADEN & EMBEDDINGS
-    // ------------------------------------------------------------
+    // ==============================
+    // PDF + EMBEDDINGS
+    // ==============================
 
     private void loadGuide() throws Exception {
         String pdfText = loadPdf("personeelsgids.pdf");
@@ -198,7 +196,8 @@ public class Huub_De_HR_Chatbot extends JFrame {
         String[] words = text.split("\\s+");
 
         for (int i = 0; i < words.length; i += size) {
-            result.add(String.join(" ", Arrays.copyOfRange(words, i, Math.min(words.length, i + size))));
+            result.add(String.join(" ",
+                    Arrays.copyOfRange(words, i, Math.min(words.length, i + size))));
         }
         return result;
     }
@@ -212,7 +211,8 @@ public class Huub_De_HR_Chatbot extends JFrame {
                 .url("https://api.openai.com/v1/embeddings")
                 .addHeader("Authorization", "Bearer " + API_KEY)
                 .addHeader("Content-Type", "application/json")
-                .post(RequestBody.create(body.toString(), MediaType.parse("application/json")))
+                .post(RequestBody.create(body.toString(),
+                        MediaType.parse("application/json")))
                 .build();
 
         Response response = CLIENT.newCall(request).execute();
@@ -222,7 +222,9 @@ public class Huub_De_HR_Chatbot extends JFrame {
                 .getJSONArray("embedding");
 
         List<Double> vector = new ArrayList<>();
-        for (int i = 0; i < arr.length(); i++) vector.add(arr.getDouble(i));
+        for (int i = 0; i < arr.length(); i++)
+            vector.add(arr.getDouble(i));
+
         return vector;
     }
 
@@ -246,58 +248,54 @@ public class Huub_De_HR_Chatbot extends JFrame {
         ));
 
         List<String> top = new ArrayList<>();
-        for (int i = 0; i < Math.min(4, chunks.size()); i++) {
+        for (int i = 0; i < Math.min(4, chunks.size()); i++)
             top.add(chunks.get(i).text);
-        }
+
         return top;
     }
 
-    // ------------------------------------------------------------
-    //  OPENAI CHAT
-    // ------------------------------------------------------------
+    // ==============================
+    // OPENAI CHAT
+    // ==============================
 
     private String ask(String question) throws Exception {
+
         List<String> context = search(question);
 
         String systemPrompt =
-    
-    "Je bent Huub, een professionele HR-assistent gespecialiseerd in het domein VERLOF. " +
-
-    "SCOPE: " +
-    "Je beantwoordt uitsluitend vragen over verlof. " +
-    "Dit omvat bijvoorbeeld vakantieverlof, bijzonder verlof, ouderschapsverlof, ziekteverlof en het opnemen van vrije dagen. " +
-    "Als een vraag niet over verlof gaat, geef je netjes aan dat je binnen deze sprint alleen verlofvragen ondersteunt. " +
-
-    "AGENT 1 – PERSONEELSGIDS: " +
-    "Controleer altijd eerst of het antwoord in het onderdeel verlof van de personeelsgids staat. " +
-    "Gebruik uitsluitend informatie uit de personeelsgids en verwijs altijd naar hoofdstuk en pagina. " +
-    "Gebruik primair het onderdeel verlof uit de personeelsgids als hoofdbron. " +
-
-    "BELANGRIJK (USER STORIES): " +
-    "Als het antwoord niet in de personeelsgids staat of onvoldoende duidelijk is, zeg je expliciet dat je het antwoord niet uit de personeelsgids kunt halen. " +
-    "Adviseer in dat geval de medewerker om contact op te nemen met zijn of haar leidinggevende. " +
-    "Je verzint nooit informatie. " +
-    "Je geeft geen waardeoordelen, meningen of kwalificaties zoals 'goed', 'slecht', 'verstandig' of 'aan te raden'. " +
-    "Je antwoordt uitsluitend feitelijk en neutraal op basis van de personeelsgids. " +
-
-    "GESPREKSGEHEUGEN: " +
-    "Je onthoudt eerdere vragen en antwoorden binnen dit gesprek en gebruikt deze als context. " +
-
-    "REGELS: " +
-    "Je vraagt om extra informatie als iets onduidelijk is. " +
-    "Je sluit elk inhoudelijk antwoord af met een korte disclaimer dat het antwoord mogelijk onvolledig of contextafhankelijk is. " +
-    "Je vraagt of de gebruiker tevreden is met het antwoord.";
-
-
+            "Je bent Huub, een professionele HR-assistent gespecialiseerd in het domein VERLOF. " +
+            "SCOPE: " +
+            "Je beantwoordt uitsluitend vragen over verlof. " +
+            "Dit omvat bijvoorbeeld vakantieverlof, bijzonder verlof, ouderschapsverlof, ziekteverlof en het opnemen van vrije dagen. " +
+            "Als een vraag niet over verlof gaat, geef je netjes aan dat je binnen deze sprint alleen verlofvragen ondersteunt. " +
+            "AGENT 1 – PERSONEELSGIDS: " +
+            "Controleer altijd eerst of het antwoord in het onderdeel verlof van de personeelsgids staat. " +
+            "Gebruik uitsluitend informatie uit de personeelsgids en verwijs altijd naar hoofdstuk en pagina. " +
+            "Gebruik primair het onderdeel verlof uit de personeelsgids als hoofdbron. " +
+            "BELANGRIJK (USER STORIES): " +
+            "Als het antwoord niet in de personeelsgids staat of onvoldoende duidelijk is, zeg je expliciet dat je het antwoord niet uit de personeelsgids kunt halen. " +
+            "Adviseer in dat geval de medewerker om contact op te nemen met zijn of haar leidinggevende. " +
+            "Je verzint nooit informatie. " +
+            "Je geeft geen waardeoordelen, meningen of kwalificaties zoals 'goed', 'slecht', 'verstandig' of 'aan te raden'. " +
+            "Je antwoordt uitsluitend feitelijk en neutraal op basis van de personeelsgids. " +
+            "GESPREKSGEHEUGEN: " +
+            "Je onthoudt eerdere vragen en antwoorden binnen dit gesprek en gebruikt deze als context. " +
+            "REGELS: " +
+            "Je vraagt om extra informatie als iets onduidelijk is. " +
+            "Je sluit elk inhoudelijk antwoord af met een korte disclaimer dat het antwoord mogelijk onvolledig of contextafhankelijk is. " +
+            "Je vraagt of de gebruiker tevreden is met het antwoord.";
 
         JSONArray messages = new JSONArray()
                 .put(new JSONObject().put("role", "system").put("content", systemPrompt));
 
-        for (JSONObject m : conversationHistory) messages.put(m);
+        for (JSONObject m : conversationHistory)
+            messages.put(m);
 
         messages.put(new JSONObject()
                 .put("role", "user")
-                .put("content", "PERSOONNELSGIDS:\n" + String.join("\n", context) + "\n\nVRAAG:\n" + question));
+                .put("content", "PERSOONNELSGIDS:\n" +
+                        String.join("\n", context) +
+                        "\n\nVRAAG:\n" + question));
 
         JSONObject body = new JSONObject()
                 .put("model", "gpt-4o-mini")
@@ -307,10 +305,12 @@ public class Huub_De_HR_Chatbot extends JFrame {
                 .url("https://api.openai.com/v1/chat/completions")
                 .addHeader("Authorization", "Bearer " + API_KEY)
                 .addHeader("Content-Type", "application/json")
-                .post(RequestBody.create(body.toString(), MediaType.parse("application/json")))
+                .post(RequestBody.create(body.toString(),
+                        MediaType.parse("application/json")))
                 .build();
 
         Response response = CLIENT.newCall(request).execute();
+
         String answer = new JSONObject(response.body().string())
                 .getJSONArray("choices")
                 .getJSONObject(0)
@@ -320,18 +320,14 @@ public class Huub_De_HR_Chatbot extends JFrame {
         conversationHistory.add(new JSONObject().put("role", "user").put("content", question));
         conversationHistory.add(new JSONObject().put("role", "assistant").put("content", answer));
 
-        if (conversationHistory.size() > 12) {
-            conversationHistory.subList(0, conversationHistory.size() - 12).clear();
-        }
+        if (conversationHistory.size() > 12)
+            conversationHistory.subList(0,
+                    conversationHistory.size() - 12).clear();
 
         return answer;
     }
 
-    // ------------------------------------------------------------
-    //  MAIN
-    // ------------------------------------------------------------
-    // test
-    //test
+    // ==============================
 
     public static void main(String[] args) throws Exception {
         new Huub_De_HR_Chatbot();
