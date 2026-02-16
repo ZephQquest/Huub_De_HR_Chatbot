@@ -37,14 +37,18 @@ public class Huub_De_HR_Chatbot extends JFrame {
     // ==============================
 
     static class Chunk {
+
         String text;
         List<Double> embedding;
+        int page;
 
-        Chunk(String text, List<Double> embedding) {
+        Chunk(String text, List<Double> embedding, int page) {
             this.text = text;
             this.embedding = embedding;
+            this.page = page;
         }
     }
+
 
     // ==============================
     // CONSTRUCTOR
@@ -175,12 +179,25 @@ public class Huub_De_HR_Chatbot extends JFrame {
     // ==============================
 
     private void loadGuide() throws Exception {
-        String pdfText = loadPdf("personeelsgids.pdf");
-        List<String> parts = chunkText(pdfText, 400);
 
-        for (String part : parts) {
-            chunks.add(new Chunk(part, embed(part)));
+        PDDocument doc = Loader.loadPDF(new File("personeelsgids.pdf"));
+        PDFTextStripper stripper = new PDFTextStripper();
+
+        for (int page = 1; page <= doc.getNumberOfPages(); page++) {
+
+            stripper.setStartPage(page);
+            stripper.setEndPage(page);
+
+            String pageText = stripper.getText(doc);
+
+            List<String> parts = chunkText(pageText, 400);
+
+            for (String part : parts) {
+                chunks.add(new Chunk(part, embed(part), page));
+            }
         }
+
+        doc.close();
     }
 
     private static String loadPdf(String path) throws Exception {
@@ -239,7 +256,8 @@ public class Huub_De_HR_Chatbot extends JFrame {
         return dot / (Math.sqrt(na) * Math.sqrt(nb));
     }
 
-    private List<String> search(String query) throws Exception {
+    private List<Chunk> search(String query) throws Exception {
+
         List<Double> qVec = embed(query);
 
         chunks.sort((a, b) -> Double.compare(
@@ -247,9 +265,11 @@ public class Huub_De_HR_Chatbot extends JFrame {
                 cosine(a.embedding, qVec)
         ));
 
-        List<String> top = new ArrayList<>();
-        for (int i = 0; i < Math.min(4, chunks.size()); i++)
-            top.add(chunks.get(i).text);
+        List<Chunk> top = new ArrayList<>();
+
+        for (int i = 0; i < Math.min(4, chunks.size()); i++) {
+            top.add(chunks.get(i));
+        }
 
         return top;
     }
@@ -260,7 +280,19 @@ public class Huub_De_HR_Chatbot extends JFrame {
 
     private String ask(String question) throws Exception {
 
-        List<String> context = search(question);
+        List<Chunk> topChunks = search(question);
+        StringBuilder contextText = new StringBuilder();
+
+        for (Chunk c : topChunks) {
+            contextText.append("PAGINA ")
+                    .append(c.page)
+                    .append(": ")
+                    .append(c.text)
+                    .append("\n\n");
+        }
+
+        String contextString = contextText.toString();
+
 
         String systemPrompt =
             "Je bent Huub, een professionele HR-assistent gespecialiseerd in het domein VERLOF. " +
@@ -273,7 +305,7 @@ public class Huub_De_HR_Chatbot extends JFrame {
                 "AGENT 1 – INFORMATIEVOORZIENING PERSONEELSGIDS: " +
             "Controleer altijd eerst of het antwoord in het onderdeel verlof van de personeelsgids staat. " +
             "Gebruik primair het onderdeel verlof uit de personeelsgids als hoofdbron. " +
-            "Gebruik uitsluitend informatie uit de personeelsgids. " + // US1
+            "Gebruik uitsluitend informatie uit de gegeven PERSOONNELSGIDS context hieronder. Als het antwoord daar niet expliciet staat, zeg dat je het niet weet." + // US1
             
                 "AGENT 2 - BETROUWBAARHEID EN COMPLIANCE" +
             "Je sluit elk antwoord af met een korte disclaimer. " +
@@ -299,9 +331,9 @@ public class Huub_De_HR_Chatbot extends JFrame {
 
         messages.put(new JSONObject()
                 .put("role", "user")
-                .put("content", "PERSOONNELSGIDS:\n" +
-                        String.join("\n", context) +
-                        "\n\nVRAAG:\n" + question));
+                .put("content", "PERSOONNELSGIDS:\n"
+                        + contextString
+                        + "\n\nVRAAG:\n" + question));
 
         JSONObject body = new JSONObject()
                 .put("model", "gpt-4o-mini")
