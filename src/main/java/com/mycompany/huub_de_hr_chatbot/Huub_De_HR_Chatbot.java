@@ -273,8 +273,7 @@ public class Huub_De_HR_Chatbot extends JFrame {
                 "AGENT 1 – INFORMATIEVOORZIENING PERSONEELSGIDS: " +
             "Controleer altijd eerst of het antwoord in het onderdeel verlof van de personeelsgids staat. " +
             "Gebruik primair het onderdeel verlof uit de personeelsgids als hoofdbron. " +
-            "Gebruik uitsluitend informatie uit de personeelsgids en verwijs bij elk antwoord altijd naar de precieze pagina. " + // US13
-                // test
+            "Gebruik uitsluitend informatie uit de personeelsgids. " + // US1
             
                 "AGENT 2 - BETROUWBAARHEID EN COMPLIANCE" +
             "Je sluit elk antwoord af met een korte disclaimer. " +
@@ -287,7 +286,7 @@ public class Huub_De_HR_Chatbot extends JFrame {
             "Je antwoordt uitsluitend feitelijk en neutraal op basis van de personeelsgids. " + // user story 25    
             
                 "AGENT 3 - INTERACTIE EN UX" +
-            
+            "Verwijs altijd naar de pagina waar de informatie is gevonden." + // US13
 
                 "AGENT 4 - BEHEER EN ONDERHOUD";
             
