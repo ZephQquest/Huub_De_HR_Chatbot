@@ -326,6 +326,7 @@ public class Huub_De_HR_Chatbot extends JFrame {
             //test
                 "AGENT 3 - INTERACTIE EN UX" +
             "Verwijs altijd naar de pagina waar de informatie is gevonden." + // US13
+                //test
 
                 "AGENT 4 - BEHEER EN ONDERHOUD";
             
