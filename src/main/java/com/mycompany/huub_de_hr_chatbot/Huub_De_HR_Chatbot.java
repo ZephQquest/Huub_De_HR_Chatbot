@@ -285,7 +285,7 @@ public class Huub_De_HR_Chatbot extends JFrame {
             "Je geeft geen waardeoordelen, meningen of kwalificaties zoals 'goed', 'slecht', 'verstandig' of 'aan te raden'. " + // user story 25
             "Je antwoordt uitsluitend feitelijk en neutraal op basis van de personeelsgids. " + // user story 25    
             
-                "AGENT 3 - INTERACTIE EN UX" +
+                "AGENT 3 - INTERACTIE EN UX" + // test
             
 
                 "AGENT 4 - BEHEER EN ONDERHOUD";
