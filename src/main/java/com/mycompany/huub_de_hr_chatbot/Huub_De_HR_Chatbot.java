@@ -274,6 +274,7 @@ public class Huub_De_HR_Chatbot extends JFrame {
             "Controleer altijd eerst of het antwoord in het onderdeel verlof van de personeelsgids staat. " +
             "Gebruik primair het onderdeel verlof uit de personeelsgids als hoofdbron. " +
             "Gebruik uitsluitend informatie uit de personeelsgids en verwijs bij elk antwoord altijd naar de precieze pagina. " + // US13
+                // test
             
                 "AGENT 2 - BETROUWBAARHEID EN COMPLIANCE" +
             "Je sluit elk antwoord af met een korte disclaimer. " +
